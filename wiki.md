@@ -1,7 +1,7 @@
 ---
 title: Dot.Plug — Platform Wiki
-version: 0.1.0
-status: draft
+version: 0.2.0
+status: mvp-scaffold-unverified
 owners: [Plug Platform Lead]
 platform-id: dot-plug
 last-review: 2026-08-01
@@ -9,7 +9,7 @@ last-review: 2026-08-01
 
 # Dot.Plug
 
-Purpose: this is Dot.Plug's own knowledge home — owned and maintained by the Dot.Plug team. It describes what this platform is, what it will own, and how it will connect to the wider Dot Ecosystem. Dot.Brain never edits this file; it only reads what we choose to publish.
+Purpose: this is Dot.Plug's own knowledge home — owned and maintained by the Dot.Plug team. It describes what this platform is, what it owns, and how it connects to the wider Dot Ecosystem. Dot.Brain never edits this file; it only reads what we choose to publish.
 
 > **Related:** [Dot.Brain's ingested view of this platform](https://github.com/sakhilebhayi/Dot.Brain/blob/main/platforms/dot-plug.md)
 
@@ -21,7 +21,7 @@ Dot.Plug is the developer portal and extension framework for the Dot Ecosystem: 
 
 Dot.Plug's job is narrow and specific: own the extension lifecycle (build, certify, grant, run, retire), not the extensions themselves. What an extension does inside its own granted scope is the publisher's business, not ours.
 
-**Status:** early-stage. This repository currently contains only a license and a one-line README; no application code, routes, models, or migrations exist yet. Everything below is architectural intent for what we are building, not a description of shipped behavior. Treat every section as design intent until the change log records an implementation milestone.
+**Status: MVP scaffold, hand-authored and UNVERIFIED.** A real Laravel 12 + Jetstream Teams application now exists in this repository — models, migrations, a marketplace listing/install flow, a seeder, and Feature tests. It was written in an environment with no PHP, Composer, or PostgreSQL available, so **none of it has been executed**: no `composer install`, no `php artisan migrate`, no test run. Treat the code as a careful first draft that has not been proven to boot. Sections 3–5 below now describe what exists in code, marked where it's still just roadmap.
 
 ## 2. Design Principle: Govern the Touch, Not the Extension
 
@@ -29,31 +29,50 @@ The line we hold: **the ecosystem governs how an extension is allowed to touch a
 
 This keeps the marketplace an open surface for innovation while keeping the parts of the ecosystem that touch trust, data, and cross-platform intelligence tightly controlled.
 
-## 3. Planned Architecture
+## 3. Architecture — Built vs. Planned
 
-No implementation exists yet. The intended shape, once building starts:
+**Built (MVP scaffold, this repository, unverified):**
 
-- **Registry service** — publisher accounts, extension listings, versioning, and the certification workflow.
-- **Capability grant engine** — issues, scopes, and revokes what an installed extension may touch on a given host platform; re-validates automatically when a host platform's schema changes.
-- **Runtime/sandbox layer** — executes extension logic within its granted scope; the boundary that makes "extension internals are never inspected" enforceable rather than just promised.
-- **Certification pipeline** — reviews an extension's declared capabilities against its behavior before it can go live or before recertification.
-- **Anomaly detection** — watches installed extensions for runtime behavior outside their declared capability grant.
-- **Marketplace/discovery surface** — listing, search, and installation UX for host-platform admins browsing available extensions.
+- Jetstream Teams shell: auth (Fortify), team management, profile, API tokens, the ecosystem SSO handoff route (`/auth/ecosystem`), the in-app notification bell — copied from Dot.Billing's already-reviewed Jetstream boilerplate and re-branded, per the ecosystem's shared-shell convention.
+- **Marketplace/discovery surface (MVP slice only):** plain controller + Blade CRUD for listing, publishing, viewing, installing, and uninstalling extensions. No search, no moderation queue, no payments.
+- Domain models: `Extension`, `ExtensionVersion`, `Installation` (see §4). `Publisher` is *not* a separate table — a publisher is simply a Jetstream `Team` that owns `Extension` rows, consistent with "team is the tenant root" across every Dot platform.
+- A `status` column on `Extension` (`draft` / `certified` / `decertified`) stands in for the certification pipeline below — it's a flag an admin would flip by hand today, not a workflow.
 
-## 4. Domain Entities We Will Own
+**Not built — still planned, per the original architecture blueprint:**
+
+- **Registry service** beyond the basic listings table — no publisher verification, no search/discovery ranking.
+- **Capability grant engine** — issuing, scoping, and revoking what an installed extension may touch on a given host platform; re-validation on host-schema change. Nothing in this MVP models a capability grant at all; `Installation` currently just records that a team installed a version, not what it's allowed to touch.
+- **Runtime/sandbox layer** — no extension code actually executes; this is a listings-and-installs database, not a runtime yet.
+- **Certification pipeline** — `status` is hand-set; there's no review workflow, no automated checks.
+- **Anomaly detection.**
+- Knowledge Pack publishing to Dot.Brain (§6) — no `observation`/`insight`/`outcome`/`incident` payloads are emitted anywhere in this codebase yet.
+
+## 4. Domain Entities
+
+**Implemented in this MVP (see `database/migrations/2026_08_01_12000*` and `app/Models/`):**
+
+| Entity | Table | Notes |
+|---|---|---|
+| Publisher | *(is a `Team`)* | A Jetstream team acting as a developer/publisher owns `Extension` rows via `developer_team_id`; the same team can also be an installing org |
+| Extension | `extensions` | Belongs to a publisher team; `status` is draft/certified/decertified |
+| ExtensionVersion | `extension_versions` | Simple version + changelog record; `is_current` flag; no diffing/artifact storage |
+| Installation | `installations` | One installing team's install of one extension + version; `status` active/uninstalled |
+
+**Not yet implemented (from the original blueprint, still planned):**
 
 | Entity | Natural key | Notes |
 |---|---|---|
-| Publisher | publisher ID | Verified developer or organization; tenant root |
-| Extension | publisher + extension ID | Version-attributed |
-| Capability grant | extension + host platform + scope | What an installed extension may touch, per installing org |
-| Installation | extension × platform × org | A single org's install of an extension |
-| Marketplace observation | extension-class × window | Adoption/retention/health aggregates |
+| Capability grant | extension + host platform + scope | What an installed extension may touch, per installing org — no table exists for this yet |
+| Marketplace observation | extension-class × window | Adoption/retention/health aggregates — no aggregation job exists |
 | Extension outcome | extension + review period | Post-certification behavior vs. declared capabilities |
 
-**Explicitly excluded from our data model:** an extension's internal logic, algorithms, and any per-customer data it processes inside its own scope. We know what an extension is entitled to touch and how it behaves in aggregate — never its internals.
+**Explicitly excluded from our data model (unchanged from the original design):** an extension's internal logic, algorithms, and any per-customer data it processes inside its own scope. We know what an extension is entitled to touch and how it behaves in aggregate — never its internals.
 
-## 5. Events We Will Emit
+**Deliberately out of MVP scope for now** (per the bounded-MVP pattern used across the ecosystem's first-cut platforms): reviews/ratings and their moderation, payments/monetization, and version-diffing. These stay on the roadmap in §7, not in the current schema.
+
+## 5. Events
+
+No event emission exists in code yet. The planned contracts are unchanged from the original design:
 
 | Event | Trigger | Frequency (planned) |
 |---|---|---|
@@ -61,11 +80,9 @@ No implementation exists yet. The intended shape, once building starts:
 | `extension.grant.issued` / `extension.grant.revoked` | Capability grant change | frequent |
 | `extension.behavior.anomaly` | Runtime behavior outside declared capabilities | rare — target 0 |
 
-These are planned event contracts, not yet implemented or emitted by any running service.
-
 ## 6. Connecting to Dot.Brain
 
-Dot.Plug will participate in the ecosystem as a registered platform (`dot-plug`) that publishes Knowledge Packs about the extension marketplace's health — never about what an extension does inside its own granted scope.
+Still planned, not implemented. Dot.Plug will participate in the ecosystem as a registered platform (`dot-plug`) that publishes Knowledge Packs about the extension marketplace's health — never about what an extension does inside its own granted scope.
 
 | Payload type | Cadence (planned) | Contains |
 |---|---|---|
@@ -80,11 +97,13 @@ Full manifest, entity/event mapping, tenancy rules, and a worked publish→PR ro
 
 ## 7. Roadmap
 
-- [ ] Stand up the registry service (publisher accounts, extension listings)
+- [x] Stand up the Jetstream Teams application shell (auth, teams, profile, notifications) — MVP scaffold, unverified
+- [x] Ship a first-cut marketplace listing/install surface (no search, no moderation, no payments)
+- [ ] Verify the scaffold actually boots: `composer install`, `php artisan migrate`, run the test suite (blocked — no PHP/Composer/PostgreSQL in the environment that authored this code)
 - [ ] Build the capability grant engine and its host-schema-change re-validation
 - [ ] Build the runtime/sandbox layer that enforces granted scope
-- [ ] Build the certification pipeline and first anomaly-detection pass
-- [ ] Ship the marketplace/discovery surface (listing, search, install UX)
+- [ ] Build the certification pipeline and first anomaly-detection pass (replace the hand-set `status` flag)
+- [ ] Add search, reviews (with moderation), and version diffing to the marketplace surface
 - [ ] Publish the first `observation` Knowledge Pack (hello-pack per Dot.Brain's onboarding procedure)
 
 ## Open Questions
@@ -92,9 +111,11 @@ Full manifest, entity/event mapping, tenancy rules, and a worked publish→PR ro
 - Publisher trust portability: does a publisher's earned trust apply per extension, or per publisher across their whole portfolio?
 - Extension-emitted domain metrics: can a certified extension register metrics in its host platform's namespace, or does it need a publisher-scoped namespace?
 - Sandbox technology choice: what isolation model (process, container, WASM) backs the runtime layer, and what does that imply for cross-platform extension portability?
+- Whether `Installation` should gain a capability-grant reference now (even as a stub) so the schema doesn't need a breaking change when the grant engine is built.
 
 ## Change Log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
 | 0.1.0 | 2026-08-01 | Plug Platform Lead | Initial wiki: architecture blueprint derived from Dot.Brain's platforms/dot-plug.md, adapted to platform-owned framing. Repository verified to contain no application code at time of writing (LICENSE + README only). |
+| 0.2.0 | 2026-08-01 | Plug Platform Lead (AI-assisted, unverified) | Hand-authored MVP scaffold: Laravel 12 + Jetstream Teams shell copied and re-branded from Dot.Billing's reviewed boilerplate; `Extension`/`ExtensionVersion`/`Installation` domain models, migrations, controller-based CRUD, dashboard, seeder, and Feature tests added. **Written with no PHP/Composer/PostgreSQL available — nothing in this codebase has been run.** Sections 3–5 rewritten to separate built-vs-planned. Reviews/moderation, payments, capability grants, the certification pipeline, the sandbox/runtime layer, and Knowledge Pack publishing remain unimplemented. |
