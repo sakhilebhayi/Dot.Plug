@@ -52,6 +52,12 @@ class ExtensionController extends Controller
      */
     public function show(Request $request, Extension $extension): View
     {
+        // Draft/decertified listings are the publisher's own unreleased or
+        // pulled work product, not public marketplace content — restrict
+        // to the publisher team. Certified listings remain open to any
+        // authenticated user, matching the marketplace index's visibility.
+        Gate::authorize('view', $extension);
+
         $team = $request->user()->currentTeam;
 
         $extension->load('developerTeam', 'versions');

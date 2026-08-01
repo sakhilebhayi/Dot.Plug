@@ -113,6 +113,49 @@ class ExtensionMarketplaceTest extends TestCase
         ]);
     }
 
+    public function test_draft_extension_detail_page_is_not_visible_to_other_teams(): void
+    {
+        // Regression test for an IDOR gap: the marketplace index correctly
+        // filtered draft listings from browsing, but the show() action had
+        // no ownership check at all, so any authenticated user could read
+        // another team's unpublished extension by guessing/incrementing the
+        // extension ID in the URL.
+        $user = User::factory()->withPersonalTeam()->create();
+        $publisher = Team::factory()->create();
+
+        $extension = Extension::create([
+            'developer_team_id' => $publisher->id,
+            'name' => 'Competitor Secret Sauce',
+            'slug' => 'competitor-secret-sauce',
+            'tagline' => 'Not yet public.',
+            'category' => 'general',
+            'status' => 'draft',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('extensions.show', $extension))
+            ->assertForbidden();
+    }
+
+    public function test_publisher_team_can_view_its_own_draft_extension(): void
+    {
+        $user = User::factory()->withPersonalTeam()->create();
+        $publisher = $user->currentTeam;
+
+        $extension = Extension::create([
+            'developer_team_id' => $publisher->id,
+            'name' => 'Our Own Draft',
+            'slug' => 'our-own-draft',
+            'category' => 'general',
+            'status' => 'draft',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('extensions.show', $extension))
+            ->assertOk()
+            ->assertSee('Our Own Draft');
+    }
+
     public function test_uncertified_extension_cannot_be_installed(): void
     {
         $user = User::factory()->withPersonalTeam()->create();

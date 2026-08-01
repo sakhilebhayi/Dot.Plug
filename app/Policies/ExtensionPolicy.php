@@ -21,9 +21,23 @@ class ExtensionPolicy
         return true;
     }
 
+    /**
+     * Certified listings are public marketplace content. Anything not yet
+     * certified (draft, or decertified) is the publisher's own unreleased
+     * or pulled work product — only members of the publisher (developer)
+     * team may view its detail page. Without this check, any authenticated
+     * user could read another team's unpublished extension name, tagline,
+     * description, and version changelog simply by guessing/incrementing
+     * the extension ID in the URL, even though the marketplace index
+     * already correctly hides non-certified listings from browsing.
+     */
     public function view(User $user, Extension $extension): bool
     {
-        return true;
+        if ($extension->status === 'certified') {
+            return true;
+        }
+
+        return $user->belongsToTeam($extension->developerTeam);
     }
 
     public function create(User $user): bool
