@@ -1,4 +1,10 @@
+<div align="center">
+
+<img src="public/images/logo.png" alt="Dot.Plug" width="200" />
+
 # Dot.Plug
+
+</div>
 
 Developer marketplace and extension framework for the Dot Ecosystem — third-party developers build, certify, and publish extensions (integrations, connectors, domain add-ons, vertical tools) that add capability to any Dot platform without changing that platform's core codebase.
 
