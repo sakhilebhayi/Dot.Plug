@@ -1,6 +1,6 @@
 ---
 title: Dot.Plug — Platform Wiki
-version: 0.4.0
+version: 0.4.1
 status: mvp-scaffold-unverified
 owners: [Plug Platform Lead]
 platform-id: dot-plug
@@ -117,6 +117,7 @@ Full manifest, entity/event mapping, tenancy rules, and a worked publish→PR ro
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.1 | 2026-08-03 | Sakhile Bhayi | Fixed a lingering branding gap: `application-logo.blade.php` (and, where present, `application-mark.blade.php`) still rendered Jetstream's stock placeholder SVG wordmark in the app sidebar/nav and other authenticated-app surfaces, even though the login page's own `authentication-card-logo.blade.php` and the marketing welcome page already used the real logo. These two components render on every authenticated page via Jetstream's own layout, so the placeholder was visible constantly, not just on one screen. Swapped to the real logo file, matching the asset path already used elsewhere in this repo. |
 | 0.4.0 | 2026-08-03 | Sakhile Bhayi | Redesigned `resources/views/welcome.blade.php`'s marketing surface: it had shipped as the untouched default Laravel/Jetstream scaffold page, so this pass builds a full custom marketing page from scratch — nav + hero + features + CTA + footer — matching the structural pattern already piloted on `mines`' `welcome.blade.php`. Nav and footer brand marks use the real `public/images/logo.png`. Hero background is a real, licensed Unsplash photo of a blue circuit board (photo by Umberto, @umby, unsplash.com/photos/blue-circuit-board-jXd2FSvcRr8), hotlinked via Unsplash's CDN with a dark gradient overlay tuned for WCAG-adequate text contrast, photographer credited inline as an HTML comment. Copy is drawn only from this wiki's real §1/§3/§4 content (extension marketplace, versioned releases, draft/certified/decertified lifecycle, team-owned publishing) — no fabricated stats or testimonials, and no claims beyond what's actually implemented in this MVP scaffold. The CDN image URL was verified with `curl -sI` before use (HTTP/2 200). |
 | 0.1.0 | 2026-08-01 | Plug Platform Lead | Initial wiki: architecture blueprint derived from Dot.Brain's platforms/dot-plug.md, adapted to platform-owned framing. Repository verified to contain no application code at time of writing (LICENSE + README only). |
 | 0.3.0 | 2026-08-02 | Sakhile Bhayi | **Executed for real, for the first time.** `composer install`, `migrate` (12 migrations), and the full test suite all ran clean against real PHP 8.5 + PostgreSQL — 56 tests, 49 passed, 7 skipped by config, 0 failed, including all 8 `ExtensionMarketplace` tests (certification gate, team-scoped install/uninstall, draft visibility) that had previously only been reviewed, not run. Also guarded the six shared Jetstream-core migrations per Dot.Brain adr/ADR-0013, so this platform's migrations are safe to run against the shared `infodot` database alongside any other platform's. |
