@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Extension;
 use App\Models\ExtensionVersion;
 use App\Models\Installation;
+use App\Models\Team;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -21,12 +22,29 @@ use Illuminate\View\View;
 class ExtensionController extends Controller
 {
     /**
+     * A user can reach any of these actions with no active team: Jetstream
+     * lets a member leave (or be removed from) their last remaining team,
+     * which nulls out current_team_id without signing them out, and this
+     * app has no team-context middleware to intercept that case upstream.
+     * Every action below must resolve the team through this helper rather
+     * than dereferencing ->currentTeam directly.
+     */
+    private function resolveCurrentTeam(Request $request): ?Team
+    {
+        return $request->user()?->currentTeam;
+    }
+
+    /**
      * Marketplace listing: every certified extension, with install status
      * for the current team.
      */
-    public function index(Request $request): View
+    public function index(Request $request): View|RedirectResponse
     {
-        $team = $request->user()->currentTeam;
+        $team = $this->resolveCurrentTeam($request);
+
+        if (! $team) {
+            return redirect()->route('teams.create');
+        }
 
         $extensions = Extension::query()
             ->where('status', 'certified')
@@ -50,7 +68,7 @@ class ExtensionController extends Controller
     /**
      * A single extension's detail page.
      */
-    public function show(Request $request, Extension $extension): View
+    public function show(Request $request, Extension $extension): View|RedirectResponse
     {
         // Draft/decertified listings are the publisher's own unreleased or
         // pulled work product, not public marketplace content — restrict
@@ -58,7 +76,11 @@ class ExtensionController extends Controller
         // authenticated user, matching the marketplace index's visibility.
         Gate::authorize('view', $extension);
 
-        $team = $request->user()->currentTeam;
+        $team = $this->resolveCurrentTeam($request);
+
+        if (! $team) {
+            return redirect()->route('teams.create');
+        }
 
         $extension->load('developerTeam', 'versions');
 
@@ -87,6 +109,12 @@ class ExtensionController extends Controller
     {
         Gate::authorize('create', Extension::class);
 
+        $team = $this->resolveCurrentTeam($request);
+
+        if (! $team) {
+            abort(403, 'No active team selected.');
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'tagline' => ['nullable', 'string', 'max:255'],
@@ -96,7 +124,7 @@ class ExtensionController extends Controller
         ]);
 
         $extension = Extension::create([
-            'developer_team_id' => $request->user()->currentTeam->id,
+            'developer_team_id' => $team->id,
             'name' => $validated['name'],
             'slug' => Str::slug($validated['name']) . '-' . Str::random(4),
             'tagline' => $validated['tagline'] ?? null,
@@ -125,7 +153,11 @@ class ExtensionController extends Controller
      */
     public function install(Request $request, Extension $extension): RedirectResponse
     {
-        $team = $request->user()->currentTeam;
+        $team = $this->resolveCurrentTeam($request);
+
+        if (! $team) {
+            abort(403, 'No active team selected.');
+        }
 
         abort_if($extension->status !== 'certified', 403, 'Only certified extensions can be installed.');
 
@@ -150,7 +182,11 @@ class ExtensionController extends Controller
      */
     public function uninstall(Request $request, Extension $extension): RedirectResponse
     {
-        $team = $request->user()->currentTeam;
+        $team = $this->resolveCurrentTeam($request);
+
+        if (! $team) {
+            abort(403, 'No active team selected.');
+        }
 
         $installation = Installation::query()
             ->where('team_id', $team->id)

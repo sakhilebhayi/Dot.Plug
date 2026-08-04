@@ -27,4 +27,21 @@ class DashboardTest extends TestCase
             ->assertSee('Installed Extensions')
             ->assertSee('Published Extensions');
     }
+
+    /**
+     * Regression test: a user can reach protected routes with no active
+     * team (e.g. after leaving/being removed from their last remaining
+     * team, which nulls out current_team_id without signing them out).
+     * There is no team-context middleware in this app to intercept that
+     * case upstream, so the dashboard route itself must guard against a
+     * null currentTeam instead of dereferencing ->id on it.
+     */
+    public function test_authenticated_user_with_no_team_is_redirected_to_team_creation(): void
+    {
+        $user = User::factory()->create(['current_team_id' => null]);
+
+        $response = $this->actingAs($user)->get('/dashboard');
+
+        $response->assertRedirect(route('teams.create'));
+    }
 }

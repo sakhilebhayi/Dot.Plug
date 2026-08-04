@@ -17,7 +17,17 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', function () {
+        // A user can reach this route with no active team: Jetstream lets a
+        // member leave (or be removed from) their last remaining team,
+        // which nulls out current_team_id without signing them out. There
+        // is no team-context middleware in this app to intercept that case
+        // upstream, so the route itself must guard against a null
+        // currentTeam before dereferencing ->id below.
         $team = auth()->user()->currentTeam;
+
+        if (! $team) {
+            return redirect()->route('teams.create');
+        }
 
         $installedExtensions = Installation::where('team_id', $team->id)
             ->where('status', 'active')

@@ -173,4 +173,54 @@ class ExtensionMarketplaceTest extends TestCase
             ->post(route('extensions.install', $extension))
             ->assertForbidden();
     }
+
+    /**
+     * Regression test: a user can reach these routes with no active team
+     * (e.g. after leaving/being removed from their last remaining team,
+     * which nulls out current_team_id without signing them out). There is
+     * no team-context middleware in this app to intercept that case
+     * upstream, so the marketplace index — a GET/initial-render path —
+     * must redirect to team creation instead of dereferencing ->id on a
+     * null currentTeam.
+     */
+    public function test_user_with_no_team_is_redirected_to_team_creation_from_marketplace_index(): void
+    {
+        $user = User::factory()->create(['current_team_id' => null]);
+
+        $response = $this->actingAs($user)->get(route('extensions.index'));
+
+        $response->assertRedirect(route('teams.create'));
+    }
+
+    /**
+     * Regression test companion to the above: install() is a POST action
+     * reachable only after the marketplace page has already loaded (i.e.
+     * the user did have a team when the page rendered), so a null
+     * currentTeam here — e.g. the team was left mid-session in another
+     * tab — cannot redirect and must abort instead, matching the
+     * ecosystem's "No active team selected." convention.
+     */
+    public function test_user_with_no_team_cannot_install_an_extension(): void
+    {
+        $user = User::factory()->create(['current_team_id' => null]);
+        $publisher = Team::factory()->create();
+
+        $extension = Extension::create([
+            'developer_team_id' => $publisher->id,
+            'name' => 'Orphaned Install Attempt',
+            'slug' => 'orphaned-install-attempt',
+            'category' => 'general',
+            'status' => 'certified',
+        ]);
+
+        ExtensionVersion::create([
+            'extension_id' => $extension->id,
+            'version' => '1.0.0',
+            'is_current' => true,
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('extensions.install', $extension))
+            ->assertForbidden();
+    }
 }
