@@ -1,142 +1,336 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dot.Plug — Developer Portal &amp; Extension Marketplace</title>
-    <meta name="description" content="Build, certify, and publish extensions that add capability to any Dot platform without touching that platform's core codebase.">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Dot.Plug — The developer portal for the Dot Ecosystem</title>
+        <meta name="description" content="Build, certify, and publish extensions that add capability to any Dot platform without touching that platform's core codebase.">
 
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Karla:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <style>
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{background:#0f0d0a;color:#e4e4e7;font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
-        :root{--accent:#fb923c;--accent-soft:rgba(251,146,60,0.12)}
-        a{color:inherit}
-        h1,h2,h3{font-family:'Space Grotesk',sans-serif}
-        .wrap{max-width:1180px;margin:0 auto;padding-inline:max(1.5rem,5vw)}
-        .btn-primary{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:10px;background:var(--accent);color:#0f0d0a;font-weight:700;text-decoration:none;transition:filter .15s}
-        .btn-primary:hover{filter:brightness(1.12)}
-        .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.14);color:#a1a1aa;text-decoration:none;font-weight:600;transition:all .15s}
-        .btn-ghost:hover{border-color:rgba(251,146,60,0.5);color:#f4f4f5}
-        .badge{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;background:var(--accent-soft);border:1px solid rgba(251,146,60,0.3);border-radius:100px;font-size:12px;font-weight:600;color:#fdba74}
-        .card{background:#171310;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.75rem;transition:border-color .2s}
-        .card:hover{border-color:rgba(251,146,60,0.35)}
-        .card-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-soft);border:1px solid rgba(251,146,60,0.25);display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;font-size:20px}
-        .status-pill{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:.03em;}
-        .status-draft{background:rgba(161,161,170,0.15);color:#a1a1aa;}
-        .status-certified{background:rgba(251,146,60,0.15);color:#fdba74;}
-    </style>
-</head>
-<body>
-    {{-- Nav --}}
-    <nav style="position:sticky;top:0;z-index:50;background:rgba(15,13,10,0.85);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.06);">
-        <div class="wrap" style="height:64px;display:flex;align-items:center;justify-content:space-between;">
-            <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-                <img src="{{ asset('images/logo.png') }}" alt="Dot.Plug" style="height:34px;width:auto;">
-                <span style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.01em;color:#f4f4f5;">Dot.Plug</span>
-            </a>
-            <div style="display:flex;align-items:center;gap:12px;">
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+            :root {
+                --ink: #17121f;
+                --ink-soft: #1e1828;
+                --violet: #6b4c93;
+                --violet-soft: #8567ab;
+                --gold: #f0c33a;
+                --gold-soft: #f5d573;
+                --paper: #f1eef5;
+                --mist: #a89bb8;
+                --line: rgba(241, 238, 245, 0.1);
+                --font-display: 'Manrope', system-ui, sans-serif;
+                --font-body: 'Karla', system-ui, sans-serif;
+                --font-mono: 'Fira Code', ui-monospace, monospace;
+                --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+            }
+            html { background: var(--ink); }
+            body { font-family: var(--font-body); background: var(--ink); color: var(--paper); }
+            .font-display { font-family: var(--font-display); }
+            .font-mono { font-family: var(--font-mono); }
+
+            .press { transition: transform 160ms var(--ease-out); }
+            .press:active { transform: scale(0.97); }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .reveal {
+                    opacity: 0;
+                    transform: translateY(14px);
+                    transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+                }
+                .reveal.is-visible { opacity: 1; transform: translateY(0); }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .reveal { opacity: 1; transform: none; }
+            }
+
+            @media (hover: hover) and (pointer: fine) {
+                .row-hover:hover { background: rgba(241, 238, 245, 0.03); }
+                .link-underline { background-size: 0% 1px; }
+                .link-underline:hover { background-size: 100% 1px; }
+            }
+            .link-underline {
+                background-image: linear-gradient(currentColor, currentColor);
+                background-position: 0 100%;
+                background-repeat: no-repeat;
+                transition: background-size 220ms var(--ease-out);
+            }
+        </style>
+    </head>
+    <body class="antialiased">
+
+        <!-- Nav -->
+        <header
+            id="site-header"
+            class="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 border-b border-transparent"
+        >
+            <nav class="max-w-[1400px] mx-auto px-5 sm:px-8 py-3 flex items-center justify-between">
+                <a href="/" class="flex items-center gap-2.5 press">
+                    <img src="{{ asset('images/logo.png') }}" alt="Dot.Plug" class="h-14 sm:h-[4.5rem] w-auto">
+                </a>
+
+                <div class="hidden md:flex items-center gap-8 font-mono text-[13px] tracking-wide uppercase text-[var(--mist)]">
+                    <a href="#marketplace" class="link-underline hover:text-[var(--paper)] pb-0.5">Marketplace</a>
+                    <a href="#lifecycle" class="link-underline hover:text-[var(--paper)] pb-0.5">Lifecycle</a>
+                </div>
+
                 @if (Route::has('login'))
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="btn-primary" style="padding:9px 20px;font-size:14px;">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="btn-ghost" style="padding:9px 20px;font-size:14px;">Sign in</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="btn-primary" style="padding:9px 20px;font-size:14px;">Get started</a>
-                        @endif
-                    @endauth
+                    <div class="flex items-center gap-3">
+                        @auth
+                            <a href="{{ url('/dashboard') }}" class="press flex items-center gap-2 px-5 py-2.5 bg-[var(--gold)] hover:bg-[var(--gold-soft)] text-[#17121f] text-sm font-display font-semibold rounded-lg transition-colors">
+                                Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="hidden sm:block text-sm font-medium text-[var(--mist)] hover:text-[var(--paper)] transition-colors">
+                                Sign in
+                            </a>
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}" class="press px-5 py-2.5 bg-[var(--gold)] hover:bg-[var(--gold-soft)] text-[#17121f] text-sm font-display font-semibold rounded-lg transition-colors">
+                                    Get started
+                                </a>
+                            @endif
+                        @endauth
+
+                        <button id="menu-toggle" class="md:hidden press p-2 -mr-2 text-[var(--paper)]" aria-label="Toggle menu" aria-expanded="false">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path id="icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 7h16M4 12h16M4 17h16"></path>
+                                <path id="icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
                 @endif
-            </div>
-        </div>
-    </nav>
+            </nav>
 
-    {{-- Hero --}}
-    <section style="position:relative;padding:8rem max(1.5rem,5vw) 6rem;overflow:hidden;">
-        <!-- Photographic Background: real blue-circuit-board photo by Umberto (@umby), unsplash.com/photos/blue-circuit-board-jXd2FSvcRr8 -->
-        <div style="position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1562408590-e32931084e23?q=80&amp;w=2400&amp;auto=format&amp;fit=crop');background-size:cover;background-position:center;"></div>
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,13,10,0.88) 0%,rgba(15,13,10,0.93) 55%,#0f0d0a 100%);"></div>
-        <div style="position:absolute;inset:0;background:linear-gradient(90deg,#0f0d0a 0%,rgba(15,13,10,0.55) 45%,transparent 80%);"></div>
-
-        <div class="wrap" style="position:relative;max-width:760px;">
-            <div class="badge">
-                <span>Developer Portal &amp; Extension Marketplace</span>
+            <div id="mobile-menu" class="hidden md:hidden border-t border-[var(--line)] bg-[#17121f]">
+                <div class="flex flex-col px-5 py-4 gap-1 font-mono text-sm uppercase tracking-wide">
+                    <a href="#marketplace" class="px-3 py-2.5 text-[var(--mist)] hover:text-[var(--paper)]">Marketplace</a>
+                    <a href="#lifecycle" class="px-3 py-2.5 text-[var(--mist)] hover:text-[var(--paper)]">Lifecycle</a>
+                    @guest
+                        <a href="{{ route('login') }}" class="px-3 py-2.5 text-[var(--mist)] hover:text-[var(--paper)]">Sign in</a>
+                    @endguest
+                </div>
             </div>
-            <h1 style="font-size:clamp(2.3rem,5.5vw,3.6rem);font-weight:700;color:#f4f4f5;line-height:1.12;letter-spacing:-0.02em;margin:1.4rem 0 1.3rem;">
-                Build once. Plug into<br>any Dot platform
-            </h1>
-            <p style="font-size:1.08rem;color:#a1a1aa;max-width:600px;margin-bottom:2.2rem;line-height:1.7;">
-                Dot.Plug is where third-party developers build, certify, and publish extensions — integrations, connectors, and vertical tools — that add capability to any Dot platform without requiring changes to that platform's core codebase. We own the extension lifecycle; what an extension does inside its own granted scope is the publisher's business.
-            </p>
-            <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        </header>
+
+        <!-- Hero -->
+        <section class="relative min-h-[100dvh] flex items-end overflow-hidden">
+            <div class="absolute inset-0" style="background: radial-gradient(ellipse 80% 60% at 15% 0%, rgba(107,76,147,0.16) 0%, transparent 60%), var(--ink);"></div>
+
+            <!-- Signature element: line-art plug + sockets — echoes the logo's own plug icon and "plug into any Dot platform" -->
+            <svg class="hidden lg:block absolute right-[5%] bottom-[8%] h-[64%] w-auto opacity-[0.16] pointer-events-none" viewBox="0 0 260 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M60 280L120 220" stroke="#f1eef5" stroke-width="4" stroke-linecap="round"/>
+                <path d="M110 190C90 210 90 240 110 260C130 280 160 280 180 260L200 240L130 170L110 190Z" stroke="#f1eef5" stroke-width="3" stroke-linejoin="round"/>
+                <path d="M170 130L140 160M210 170L180 200" stroke="#f1eef5" stroke-width="4" stroke-linecap="round"/>
+                <!-- sockets it can plug into, representing other Dot platforms -->
+                <rect x="30" y="40" width="34" height="46" rx="4" stroke="#f0c33a" stroke-width="2.5"/>
+                <circle cx="40" cy="56" r="2.5" fill="#f0c33a"/>
+                <circle cx="54" cy="56" r="2.5" fill="#f0c33a"/>
+                <rect x="90" y="30" width="34" height="46" rx="4" stroke="#f0c33a" stroke-width="2.5" opacity="0.6"/>
+                <circle cx="100" cy="46" r="2.5" fill="#f0c33a" opacity="0.6"/>
+                <circle cx="114" cy="46" r="2.5" fill="#f0c33a" opacity="0.6"/>
+            </svg>
+
+            <div class="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 pt-32 pb-16 sm:pb-20 w-full">
+                <div class="max-w-2xl reveal" data-reveal>
+                    <p class="font-mono text-xs tracking-[0.18em] uppercase text-[var(--gold)] mb-6">
+                        Developer portal &amp; extension marketplace
+                    </p>
+
+                    <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-[var(--paper)] mb-6">
+                        Build once.<br>Plug into any Dot platform.
+                    </h1>
+
+                    <p class="text-lg text-[var(--mist)] leading-relaxed max-w-xl mb-10">
+                        Dot.Plug is where third-party developers build, certify, and publish extensions — integrations, connectors, and vertical tools — that add capability to any Dot platform without touching that platform's core codebase. We govern the touch, not the extension.
+                    </p>
+
+                    @guest
+                        <div class="flex flex-wrap items-center gap-4">
+                            <a href="{{ route('register') }}" class="press px-7 py-3.5 bg-[var(--gold)] hover:bg-[var(--gold-soft)] text-[#17121f] font-display font-semibold rounded-lg transition-colors">
+                                Get started
+                            </a>
+                            <a href="#marketplace" class="press flex items-center gap-2 px-7 py-3.5 text-[var(--paper)] font-medium rounded-lg border border-[var(--line)] hover:border-[var(--mist)] transition-colors">
+                                Explore the marketplace
+                            </a>
+                        </div>
+                    @endguest
+                </div>
+            </div>
+
+            <!-- Status strip — real certification states from wiki.md §3, not fabricated metrics -->
+            <div class="relative z-10 w-full border-t border-[var(--line)] bg-[#17121f]/60 backdrop-blur-sm">
+                <div class="max-w-[1400px] mx-auto px-5 sm:px-8 py-4 flex flex-wrap gap-x-8 gap-y-2 font-mono text-[11px] tracking-[0.14em] uppercase text-[var(--mist)]">
+                    <span>Any team can publish</span>
+                    <span class="text-[var(--gold)]">·</span>
+                    <span>Versioned releases</span>
+                    <span class="text-[var(--gold)]">·</span>
+                    <span>Draft, certified, decertified</span>
+                    <span class="text-[var(--gold)]">·</span>
+                    <span>No core fork required</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section id="marketplace" class="py-24 sm:py-28 px-5 sm:px-8">
+            <div class="max-w-[1400px] mx-auto">
+                <div class="max-w-xl mb-16 reveal" data-reveal>
+                    <p class="font-mono text-xs tracking-[0.18em] uppercase text-[var(--gold)] mb-4">Govern the touch, not the extension</p>
+                    <h2 class="font-display font-semibold text-3xl sm:text-4xl text-[var(--paper)] leading-tight">
+                        What an extension does in its own scope is the publisher's business
+                    </h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 border-t border-[var(--line)]">
+                    @php
+                        $features = [
+                            ['tag' => 'Marketplace', 'title' => 'List, publish, install', 'body' => 'List, publish, view, install, and uninstall extensions — integrations, connectors, and vertical tools — per team.'],
+                            ['tag' => 'Releases', 'title' => 'Versioned releases', 'body' => 'Every extension version carries its own changelog record, with a clear current-version flag.'],
+                            ['tag' => 'Status', 'title' => 'Certification state', 'body' => 'Every extension carries a lifecycle state — draft, certified, or decertified — your team can check before installing.'],
+                            ['tag' => 'Publishing', 'title' => 'Team-owned publishing', 'body' => 'Any team in the Dot Ecosystem can become a publisher. No separate developer account, no gatekept signup.'],
+                            ['tag' => 'Scope', 'title' => 'Capability-scoped by design', 'body' => 'The ecosystem governs how an extension is allowed to touch a platform, not what the extension is. No shortcuts, no extra tax for being third-party.'],
+                            ['tag' => 'Trust', 'title' => 'A governed boundary where it matters', 'body' => 'The moment an extension publishes into or consumes from the shared intelligence layer, the same rules apply to every publisher.'],
+                        ];
+                    @endphp
+                    @foreach ($features as $i => $f)
+                        <div class="row-hover border-b border-[var(--line)] {{ $i % 2 === 0 ? 'md:border-r' : '' }} px-1 py-8 sm:py-10 transition-colors reveal" data-reveal>
+                            <p class="font-mono text-[11px] tracking-[0.14em] uppercase text-[var(--gold)] mb-3">{{ $f['tag'] }}</p>
+                            <h3 class="font-display font-semibold text-xl text-[var(--paper)] mb-2.5">{{ $f['title'] }}</h3>
+                            <p class="text-[var(--mist)] leading-relaxed max-w-md">{{ $f['body'] }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <!-- Lifecycle — the five-stage model from wiki.md §1, styled as the platform's own data artifact -->
+        <section id="lifecycle" class="py-24 sm:py-28 px-5 sm:px-8 bg-[var(--ink-soft)] border-y border-[var(--line)]">
+            <div class="max-w-[1400px] mx-auto">
+                <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-12 lg:gap-20">
+                    <div class="reveal" data-reveal>
+                        <p class="font-mono text-xs tracking-[0.18em] uppercase text-[var(--gold)] mb-4">The lifecycle we own</p>
+                        <h2 class="font-display font-semibold text-3xl sm:text-4xl text-[var(--paper)] leading-tight mb-5">
+                            Build, certify, grant, run, retire
+                        </h2>
+                        <p class="text-[var(--mist)] leading-relaxed max-w-sm">
+                            Dot.Plug's job is narrow and specific: own the extension lifecycle end to end — not what an extension does inside it.
+                        </p>
+                    </div>
+
+                    <div class="reveal overflow-x-auto" data-reveal>
+                        <div class="flex items-stretch gap-0 min-w-[560px] font-mono text-xs uppercase tracking-[0.1em]">
+                            @php
+                                $stages = [
+                                    ['label' => 'Build', 'note' => 'A publisher team builds an extension version'],
+                                    ['label' => 'Certify', 'note' => 'Lifecycle state: draft, certified, or decertified'],
+                                    ['label' => 'Grant', 'note' => 'An installing team scopes what it may touch'],
+                                    ['label' => 'Run', 'note' => 'The extension operates inside its granted scope'],
+                                    ['label' => 'Retire', 'note' => 'Uninstall or decertify, cleanly'],
+                                ];
+                            @endphp
+                            @foreach ($stages as $i => $s)
+                                <div class="flex-1 {{ $i > 0 ? 'border-l border-[var(--line)] pl-4' : '' }} {{ $i < count($stages) - 1 ? 'pr-4' : '' }}">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="text-[var(--violet-soft)]">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                                        <span class="text-[var(--paper)] font-display normal-case text-sm font-semibold tracking-normal">{{ $s['label'] }}</span>
+                                    </div>
+                                    <p class="text-[var(--mist)] normal-case tracking-normal leading-relaxed">{{ $s['note'] }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                        <p class="mt-8 text-sm text-[var(--mist)] normal-case font-body max-w-md">
+                            An extension's internal logic and any per-customer data it processes inside its own scope stay out of our data model — we know what it's entitled to touch, never its internals.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="relative py-28 sm:py-36 px-5 sm:px-8 overflow-hidden">
+            <div class="absolute inset-0" style="background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(240,195,58,0.08) 0%, transparent 65%), var(--ink);"></div>
+
+            <div class="relative z-10 max-w-2xl mx-auto text-center reveal" data-reveal>
+                <h2 class="font-display font-semibold text-3xl sm:text-4xl text-[var(--paper)] leading-tight mb-5">
+                    Extend your platform without forking it
+                </h2>
+                <p class="text-[var(--mist)] leading-relaxed mb-10 max-w-lg mx-auto">
+                    Publish an extension, or install one from another team — all without touching your platform's core.
+                </p>
+
                 @guest
-                    <a href="{{ route('register') }}" class="btn-primary">Get started</a>
-                    <a href="#features" class="btn-ghost">Explore the marketplace</a>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="{{ route('register') }}" class="press px-8 py-3.5 bg-[var(--gold)] hover:bg-[var(--gold-soft)] text-[#17121f] font-display font-semibold rounded-lg transition-colors">
+                            Get started
+                        </a>
+                        <a href="{{ route('login') }}" class="press px-8 py-3.5 text-[var(--paper)] font-medium rounded-lg border border-[var(--line)] hover:border-[var(--mist)] transition-colors">
+                            Sign in
+                        </a>
+                    </div>
                 @endguest
-                @auth
-                    <a href="{{ url('/dashboard') }}" class="btn-primary">Go to Dashboard</a>
-                @endauth
             </div>
-        </div>
-    </section>
+        </section>
 
-    {{-- Features --}}
-    <section id="features" style="padding:1rem max(1.5rem,5vw) 5rem;">
-        <div class="wrap">
-            <div style="text-align:center;max-width:640px;margin:0 auto 3rem;">
-                <h2 style="font-size:2rem;font-weight:700;color:#f4f4f5;letter-spacing:-0.02em;margin-bottom:0.75rem;">Govern the touch, not the extension</h2>
-                <p style="color:#a1a1aa;font-size:15px;">Our job is narrow and specific: own build, certify, grant, run, retire.</p>
+        <!-- Footer -->
+        <footer class="py-14 px-5 sm:px-8 border-t border-[var(--line)]">
+            <div class="max-w-[1400px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+                <a href="/" class="flex items-center gap-2.5">
+                    <img src="{{ asset('images/logo.png') }}" alt="Dot.Plug" class="h-11 w-auto opacity-90">
+                </a>
+                <p class="font-mono text-xs tracking-wide text-[var(--mist)]">
+                    &copy; {{ date('Y') }} Dot.Plug. Developer portal &amp; extension marketplace for the Dot Ecosystem.
+                </p>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem;">
-                <div class="card">
-                    <div class="card-icon">🧩</div>
-                    <h3 style="font-size:1rem;font-weight:700;color:#f4f4f5;margin-bottom:0.5rem;">Extension Marketplace</h3>
-                    <p style="font-size:13.5px;color:#a1a1aa;">List, publish, install, and manage extensions — integrations, connectors, and vertical tools — per team.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🏷️</div>
-                    <h3 style="font-size:1rem;font-weight:700;color:#f4f4f5;margin-bottom:0.5rem;">Versioned Releases</h3>
-                    <p style="font-size:13.5px;color:#a1a1aa;">Every extension version carries its own changelog record, with a clear current-version flag.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">✅</div>
-                    <h3 style="font-size:1rem;font-weight:700;color:#f4f4f5;margin-bottom:0.5rem;">Certification Status</h3>
-                    <p style="font-size:13.5px;color:#a1a1aa;margin-bottom:0.75rem;">Every extension carries a clear lifecycle state your team can check before installing.</p>
-                    <div><span class="status-pill status-draft">Draft</span> &nbsp; <span class="status-pill status-certified">Certified</span></div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">👥</div>
-                    <h3 style="font-size:1rem;font-weight:700;color:#f4f4f5;margin-bottom:0.5rem;">Team-Owned Publishing</h3>
-                    <p style="font-size:13.5px;color:#a1a1aa;">Any team in the Dot Ecosystem can become a publisher — no separate developer account required.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        </footer>
 
-    {{-- CTA --}}
-    <section style="padding:2rem max(1.5rem,5vw) 7rem;text-align:center;">
-        <div class="wrap" style="max-width:600px;padding:3rem 2.5rem;background:#171310;border:1px solid rgba(251,146,60,0.18);border-radius:20px;">
-            <h2 style="font-size:1.7rem;font-weight:700;color:#f4f4f5;letter-spacing:-0.02em;margin-bottom:0.75rem;">Extend your platform without forking it</h2>
-            <p style="font-size:14px;color:#a1a1aa;margin-bottom:2rem;">Publish an extension, or install one from another team — all without touching your platform's core.</p>
-            @guest
-                <a href="{{ route('register') }}" class="btn-primary">Create your free account</a>
-            @else
-                <a href="{{ url('/dashboard') }}" class="btn-primary">Go to your Dashboard</a>
-            @endguest
-        </div>
-    </section>
+        <script>
+            // Nav scroll state + mobile menu (vanilla JS — no Alpine dependency on this guest page)
+            const header = document.getElementById('site-header');
+            const onScroll = () => {
+                header.classList.toggle('bg-[#17121f]/95', window.pageYOffset > 24);
+                header.classList.toggle('backdrop-blur-md', window.pageYOffset > 24);
+                header.classList.toggle('border-[var(--line)]', window.pageYOffset > 24);
+                header.classList.toggle('border-transparent', window.pageYOffset <= 24);
+            };
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
 
-    {{-- Footer --}}
-    <footer style="border-top:1px solid rgba(255,255,255,0.06);padding:2.5rem max(1.5rem,5vw);">
-        <div class="wrap" style="display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;">
-            <img src="{{ asset('images/logo.png') }}" alt="Dot.Plug" style="height:30px;width:auto;opacity:0.9;">
-            <p style="font-size:12px;color:#52525b;">&copy; {{ date('Y') }} Dot.Plug · Developer portal &amp; extension marketplace for the Dot Ecosystem</p>
-        </div>
-    </footer>
-</body>
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const iconOpen = document.getElementById('icon-open');
+            const iconClose = document.getElementById('icon-close');
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    const isOpen = !mobileMenu.classList.contains('hidden');
+                    mobileMenu.classList.toggle('hidden', isOpen);
+                    iconOpen.classList.toggle('hidden', !isOpen);
+                    iconClose.classList.toggle('hidden', isOpen);
+                    menuToggle.setAttribute('aria-expanded', String(!isOpen));
+                });
+            }
+
+            if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches && 'IntersectionObserver' in window) {
+                const io = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            io.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+                document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+            } else {
+                document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-visible'));
+            }
+        </script>
+    </body>
 </html>
