@@ -3,10 +3,11 @@
 namespace Database\Factories;
 
 use App\Models\Extension;
+use App\Models\ExtensionVersion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ExtensionVersion>
+ * @extends Factory<ExtensionVersion>
  */
 class ExtensionVersionFactory extends Factory
 {

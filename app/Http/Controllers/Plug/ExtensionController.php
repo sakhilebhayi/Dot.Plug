@@ -126,7 +126,7 @@ class ExtensionController extends Controller
         $extension = Extension::create([
             'developer_team_id' => $team->id,
             'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']) . '-' . Str::random(4),
+            'slug' => Str::slug($validated['name']).'-'.Str::random(4),
             'tagline' => $validated['tagline'] ?? null,
             'description' => $validated['description'] ?? null,
             'category' => $validated['category'],

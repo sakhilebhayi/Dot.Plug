@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Extension;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Extension>
+ * @extends Factory<Extension>
  */
 class ExtensionFactory extends Factory
 {
@@ -18,13 +19,13 @@ class ExtensionFactory extends Factory
      */
     public function definition(): array
     {
-        $name = $this->faker->unique()->words(2, true) . ' Connector';
+        $name = $this->faker->unique()->words(2, true).' Connector';
         $name = Str::title($name);
 
         return [
             'developer_team_id' => Team::factory(),
             'name' => $name,
-            'slug' => Str::slug($name) . '-' . Str::random(4),
+            'slug' => Str::slug($name).'-'.Str::random(4),
             'tagline' => $this->faker->sentence(6),
             'description' => $this->faker->paragraph(3),
             'category' => $this->faker->randomElement(['integrations', 'connectors', 'analytics', 'automation', 'vertical']),

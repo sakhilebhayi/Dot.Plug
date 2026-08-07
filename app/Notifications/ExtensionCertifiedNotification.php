@@ -14,9 +14,7 @@ use Illuminate\Notifications\Notification;
  */
 class ExtensionCertifiedNotification extends Notification
 {
-    public function __construct(public Extension $extension)
-    {
-    }
+    public function __construct(public Extension $extension) {}
 
     /**
      * @return array<int, string>

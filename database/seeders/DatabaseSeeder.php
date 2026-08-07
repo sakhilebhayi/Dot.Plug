@@ -8,6 +8,7 @@ use App\Models\Installation;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -75,7 +76,7 @@ class DatabaseSeeder extends Seeder
             $extension = Extension::create([
                 'developer_team_id' => $data['team']->id,
                 'name' => $data['name'],
-                'slug' => \Illuminate\Support\Str::slug($data['name']),
+                'slug' => Str::slug($data['name']),
                 'tagline' => $data['tagline'],
                 'description' => $data['description'],
                 'category' => $data['category'],
