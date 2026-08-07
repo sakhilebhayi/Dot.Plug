@@ -123,7 +123,11 @@
 
         <!-- Hero -->
         <section class="relative min-h-[100dvh] flex items-end overflow-hidden">
-            <div class="absolute inset-0" style="background: radial-gradient(ellipse 80% 60% at 15% 0%, rgba(107,76,147,0.16) 0%, transparent 60%), var(--ink);"></div>
+            <!-- Photo: black, red and yellow coated wires, by Denny Müller,
+            unsplash.com/photos/black-red-and-yellow-coated-wires-6ySmw7CwYDk -->
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1584809923235-fabdba83d1df?q=80&w=2400&auto=format&fit=crop');"></div>
+            <div class="absolute inset-0" style="background: linear-gradient(100deg, var(--ink) 0%, var(--ink) 32%, rgba(23,18,31,0.6) 55%, rgba(23,18,31,0.35) 75%, rgba(23,18,31,0.18) 100%);"></div>
+            <div class="absolute inset-0" style="background: radial-gradient(ellipse 80% 60% at 15% 0%, rgba(107,76,147,0.16) 0%, transparent 60%);"></div>
 
             <!-- Signature element: line-art plug + sockets — echoes the logo's own plug icon and "plug into any Dot platform" -->
             <svg class="hidden lg:block absolute right-[5%] bottom-[8%] h-[64%] w-auto opacity-[0.16] pointer-events-none" viewBox="0 0 260 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
