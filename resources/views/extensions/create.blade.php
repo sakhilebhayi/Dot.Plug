@@ -9,7 +9,7 @@
 
     <h1 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:#f4f4f5;margin:0 0 0.4rem;letter-spacing:-0.01em;">Publish an extension</h1>
     <p style="font-size:0.8rem;color:#52525b;margin:0 0 1.5rem;">
-        Published under <strong style="color:#a1a1aa;">{{ auth()->user()->currentTeam->name }}</strong> as the developer team.
+        Published under <strong style="color:#a1a1aa;">{{ auth()->user()->currentTeam->name ?? 'your team' }}</strong> as the developer team.
         Listings start as drafts &mdash; the certification pipeline described in wiki.md isn't built yet, so nothing here is auto-approved.
     </p>
 
