@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Notifications\ExtensionCertifiedNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Notification;
 
 class Extension extends Model
 {
@@ -26,6 +28,15 @@ class Extension extends Model
         'status',
         'icon',
     ];
+
+    protected static function booted(): void
+    {
+        static::updated(function (self $extension) {
+            if ($extension->wasChanged('status') && $extension->status === 'certified' && $extension->developerTeam) {
+                Notification::send($extension->developerTeam->allUsers(), new ExtensionCertifiedNotification($extension));
+            }
+        });
+    }
 
     /**
      * The publisher (developer) team that owns this listing.

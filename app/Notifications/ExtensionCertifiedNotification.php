@@ -7,10 +7,12 @@ use Illuminate\Notifications\Notification;
 
 /**
  * In-app (database channel only) notification for a marketplace listing's
- * certification status changing. Not yet wired to any automatic trigger —
- * there is no certification pipeline yet (see wiki.md §3 roadmap); dispatch
- * manually via `$user->notify(new ExtensionCertifiedNotification($extension))`
- * until one exists.
+ * certification status changing. Fired automatically for every member of
+ * the extension's developer team by App\Models\Extension::booted(), which
+ * fires only when `status` transitions into "certified" via an update —
+ * never on initial creation. Certification itself remains a manual,
+ * hand-set flag (wiki.md §3, §7 roadmap) — only this notification is
+ * automatic; nothing here changes how or when an extension gets certified.
  */
 class ExtensionCertifiedNotification extends Notification
 {
