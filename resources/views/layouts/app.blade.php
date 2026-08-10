@@ -89,7 +89,7 @@
     <aside class="sidebar">
         <div class="sidebar-brand">
             <div class="brand-icon" style="background:transparent;border:none;">
-                <img src="{{ asset('images/logo.png') }}" alt="Dot.Plug" style="width:32px;height:32px;object-fit:contain;">
+                <img src="{{ asset('images/mark.png') }}" alt="Dot.Plug" style="width:32px;height:32px;object-fit:contain;">
             </div>
             <div>
                 <div class="brand-name">Dot.Plug</div>
