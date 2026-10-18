@@ -45,7 +45,9 @@
         <div class="dot-card" style="padding:1.5rem;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
                 <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:#52525b;">Published by this team</div>
+                @can('create', \App\Models\Extension::class)
                 <a href="{{ route('extensions.create') }}" style="font-size:0.72rem;color:#818cf8;text-decoration:none;">Publish new &rarr;</a>
+                @endcan
             </div>
             @forelse ($publishedExtensions as $extension)
             <a href="{{ route('extensions.show', $extension) }}" style="display:flex;align-items:center;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid rgba(255,255,255,0.06);text-decoration:none;color:inherit;">

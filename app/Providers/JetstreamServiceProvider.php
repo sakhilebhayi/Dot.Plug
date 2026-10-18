@@ -57,5 +57,9 @@ class JetstreamServiceProvider extends ServiceProvider
             'create',
             'update',
         ])->description('Editor users have the ability to read, create, and update.');
+
+        Jetstream::role('viewer', 'Viewer', [
+            'read',
+        ])->description('Viewers can browse the marketplace and see what the team has installed or published. They cannot install, uninstall, publish or change anything.');
     }
 }

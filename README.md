@@ -36,6 +36,19 @@ Full architecture, domain model, and roadmap: [`wiki.md`](./wiki.md).
 
 Capability grants, the certification pipeline, the extension runtime/sandbox, anomaly detection, reviews/moderation, payments, version diffing, and Knowledge Pack publishing to Dot.Brain. See `wiki.md` §3–§7 for the full built-vs-planned breakdown.
 
+## Roles
+
+Access follows the team (company) role. InfoDot is the source of truth and the role is re-applied at every sign-in.
+
+| InfoDot role | Dot.Plug role | Can |
+|---|---|---|
+| owner, admin | admin (owner for the creator) | everything: install, uninstall, publish, edit and delete listings |
+| editor | editor | browse the marketplace, the dashboard and extension pages; no installs or publishing (those are company-wide, so owner/admin only) |
+| viewer | viewer | read only: same read surface as an editor, no write controls are shown and every write route answers 403 |
+| anything else | viewer | an unrecognised InfoDot role gets the least powerful role, never editor |
+
+Moving someone from editor or admin to viewer in InfoDot takes effect at their next sign-in. Install, uninstall and publish stay owner/admin only; the role matrix is in `tests/Feature/Plug/ViewerRoleMatrixTest.php`.
+
 ## Getting started
 
 Not verified to work — there was no PHP/Composer available to test this. In theory, on a machine with PHP 8.3+, Composer, Node, and PostgreSQL:
