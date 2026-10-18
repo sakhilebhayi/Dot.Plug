@@ -131,9 +131,10 @@ class ExtensionController extends Controller
             'description' => $validated['description'] ?? null,
             'category' => $validated['category'],
             'icon' => $validated['icon'] ?? 'extension',
-            // MVP: no certification pipeline yet (see wiki.md roadmap), so
-            // self-published listings start life as "draft" rather than
-            // being auto-certified.
+            // Always "draft". `certified` can only be set by a platform
+            // operator, never by the publishing team, and `status` is not
+            // read from the request. No certification pipeline exists yet
+            // (see wiki.md roadmap).
             'status' => 'draft',
         ]);
 
@@ -153,6 +154,8 @@ class ExtensionController extends Controller
      */
     public function install(Request $request, Extension $extension): RedirectResponse
     {
+        Gate::authorize('install', $extension);
+
         $team = $this->resolveCurrentTeam($request);
 
         if (! $team) {
@@ -182,6 +185,8 @@ class ExtensionController extends Controller
      */
     public function uninstall(Request $request, Extension $extension): RedirectResponse
     {
+        Gate::authorize('uninstall', $extension);
+
         $team = $this->resolveCurrentTeam($request);
 
         if (! $team) {

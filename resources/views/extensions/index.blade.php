@@ -5,10 +5,12 @@
             <h1 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:#f4f4f5;margin:0 0 0.2rem;letter-spacing:-0.01em;">Marketplace</h1>
             <p style="font-size:0.78rem;color:#52525b;margin:0;">{{ $extensions->count() }} certified extension{{ $extensions->count() === 1 ? '' : 's' }} available</p>
         </div>
+        @can('create', \App\Models\Extension::class)
         <a href="{{ route('extensions.create') }}" class="dot-btn dot-btn-primary">
             <span class="material-symbols-rounded" style="font-size:16px;">add</span>
             Publish an extension
         </a>
+        @endcan
     </div>
 
     <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;">

@@ -23,15 +23,19 @@
 
             @if ($extension->status === 'certified')
                 @if ($isInstalled)
+                @can('uninstall', $extension)
                 <form method="POST" action="{{ route('extensions.uninstall', $extension) }}">
                     @csrf
                     <button type="submit" class="dot-btn dot-btn-ghost">Uninstall</button>
                 </form>
+                @endcan
                 @else
+                @can('install', $extension)
                 <form method="POST" action="{{ route('extensions.install', $extension) }}">
                     @csrf
                     <button type="submit" class="dot-btn dot-btn-primary">Install</button>
                 </form>
+                @endcan
                 @endif
             @endif
         </div>
